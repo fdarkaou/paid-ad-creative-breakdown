@@ -1,0 +1,352 @@
+{
+  "tool": "paid-ad-creative-breakdown/raw",
+  "fetchedAt": "2026-11-06T08:00:00.000Z",
+  "source": {
+    "apps": [
+      "1000000001"
+    ]
+  },
+  "ads": [
+    {
+      "platform": "meta",
+      "archiveId": "900000000000001",
+      "label": "Example Meals",
+      "storeId": "1000000001",
+      "ad": {
+        "item": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "canonicalKey": "paid:meta:900000000000001",
+          "source": "paid",
+          "platform": "meta",
+          "archiveId": "900000000000001",
+          "advertiser": {
+            "externalId": "400000000000001",
+            "name": "Example Meal Planner"
+          },
+          "status": "active",
+          "startedAt": "2026-09-02T00:00:00.000Z",
+          "endedAt": null,
+          "discoveredAt": "2026-09-04T00:00:00.000Z",
+          "sourceUrl": "https://www.facebook.com/ads/library?id=900000000000001",
+          "creative": {
+            "format": "video",
+            "hook": "Turn saved recipes into a grocery list",
+            "body": "Turn saved recipes into a grocery list in one tap.",
+            "title": "Example Meal Planner",
+            "description": null,
+            "ctaText": "Install now",
+            "imageUrls": [
+              "https://cdn.example.com/ad.jpg"
+            ],
+            "videoUrls": [
+              "https://cdn.example.com/ad.mp4"
+            ],
+            "units": []
+          },
+          "productLink": {
+            "kind": "app_store",
+            "name": "Example Meal Planner",
+            "url": "https://apps.apple.com/app/id1000000001",
+            "externalId": "1000000001",
+            "confidence": "verified"
+          },
+          "destination": {
+            "kind": "app_store",
+            "url": "https://apps.apple.com/app/id1000000001",
+            "host": "apps.apple.com",
+            "page": "apps.apple.com",
+            "appStoreId": "1000000001"
+          },
+          "productIconUrl": null,
+          "performance": {
+            "kind": "unavailable"
+          },
+          "saved": false
+        },
+        "product": null,
+        "sameAppAds": [],
+        "otherAppAds": [],
+        "transcript": {
+          "text": "Your grocery list, done. Open any saved recipe, tap once, and every ingredient is on the list. Try it free.",
+          "words": null,
+          "language": "en",
+          "model": "transcription-model",
+          "generatedAt": "2026-11-01T00:00:00.000Z"
+        },
+        "analysis": {
+          "summary": "A product demo that opens on the finished grocery list, then shows how a saved recipe becomes that list.",
+          "visibleText": [
+            "Turn saved recipes into a grocery list",
+            "One tap"
+          ],
+          "hookNotes": [
+            "Opens with the customer outcome before showing the product.",
+            "The promise is readable without sound."
+          ],
+          "timestampNotes": [
+            {
+              "timestampSeconds": 0,
+              "note": "The app result appears immediately."
+            },
+            {
+              "timestampSeconds": 11,
+              "note": "Tap gesture with a short sound effect."
+            }
+          ],
+          "timeline": {
+            "durationSeconds": 17,
+            "format": "product demo",
+            "pace": "medium",
+            "cutCount": 3,
+            "productAppearsAtSeconds": 0,
+            "scenes": [
+              {
+                "startSeconds": 0,
+                "endSeconds": 4,
+                "description": "The finished grocery list fills the screen."
+              },
+              {
+                "startSeconds": 4,
+                "endSeconds": 11,
+                "description": "A hand scrolls a saved recipe in the app."
+              },
+              {
+                "startSeconds": 11,
+                "endSeconds": 14,
+                "description": "One tap adds every ingredient to the list."
+              },
+              {
+                "startSeconds": 14,
+                "endSeconds": 17,
+                "description": "End card with the app icon."
+              }
+            ],
+            "onScreenText": [
+              {
+                "startSeconds": 0,
+                "endSeconds": 4,
+                "text": "Turn saved recipes into a grocery list"
+              },
+              {
+                "startSeconds": 11,
+                "endSeconds": 14,
+                "text": "One tap"
+              }
+            ]
+          },
+          "editingPattern": "Fast product demonstration with direct onscreen text.",
+          "reusablePromptIngredients": [
+            "utility-first hook",
+            "product demonstration"
+          ],
+          "model": "analysis-model",
+          "generatedAt": "2026-11-01T00:00:00.000Z"
+        }
+      },
+      "analysisState": {
+        "status": "ready",
+        "analysis": {
+          "summary": "A product demo that opens on the finished grocery list, then shows how a saved recipe becomes that list.",
+          "visibleText": [
+            "Turn saved recipes into a grocery list",
+            "One tap"
+          ],
+          "hookNotes": [
+            "Opens with the customer outcome before showing the product.",
+            "The promise is readable without sound."
+          ],
+          "timestampNotes": [
+            {
+              "timestampSeconds": 0,
+              "note": "The app result appears immediately."
+            },
+            {
+              "timestampSeconds": 11,
+              "note": "Tap gesture with a short sound effect."
+            }
+          ],
+          "timeline": {
+            "durationSeconds": 17,
+            "format": "product demo",
+            "pace": "medium",
+            "cutCount": 3,
+            "productAppearsAtSeconds": 0,
+            "scenes": [
+              {
+                "startSeconds": 0,
+                "endSeconds": 4,
+                "description": "The finished grocery list fills the screen."
+              },
+              {
+                "startSeconds": 4,
+                "endSeconds": 11,
+                "description": "A hand scrolls a saved recipe in the app."
+              },
+              {
+                "startSeconds": 11,
+                "endSeconds": 14,
+                "description": "One tap adds every ingredient to the list."
+              },
+              {
+                "startSeconds": 14,
+                "endSeconds": 17,
+                "description": "End card with the app icon."
+              }
+            ],
+            "onScreenText": [
+              {
+                "startSeconds": 0,
+                "endSeconds": 4,
+                "text": "Turn saved recipes into a grocery list"
+              },
+              {
+                "startSeconds": 11,
+                "endSeconds": 14,
+                "text": "One tap"
+              }
+            ]
+          },
+          "editingPattern": "Fast product demonstration with direct onscreen text.",
+          "reusablePromptIngredients": [
+            "utility-first hook",
+            "product demonstration"
+          ],
+          "model": "analysis-model",
+          "generatedAt": "2026-11-01T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "platform": "tiktok",
+      "archiveId": "7400000000000000002",
+      "label": "Example Meals",
+      "storeId": "1000000001",
+      "ad": {
+        "item": {
+          "id": "22222222-2222-4222-8222-222222222222",
+          "canonicalKey": "paid:tiktok:7400000000000000002",
+          "source": "paid",
+          "platform": "tiktok",
+          "archiveId": "7400000000000000002",
+          "advertiser": {
+            "externalId": "7300000000000000002",
+            "name": "Example Meal Planner"
+          },
+          "status": "active",
+          "startedAt": "2026-10-20T00:00:00.000Z",
+          "endedAt": null,
+          "discoveredAt": "2026-10-22T00:00:00.000Z",
+          "sourceUrl": null,
+          "creative": {
+            "format": "video",
+            "hook": "POV: dinner is planned before you leave work",
+            "body": "Plan the week in 2 minutes.",
+            "title": "Example Meal Planner",
+            "description": null,
+            "ctaText": "Download",
+            "imageUrls": [
+              "https://cdn.example.com/ad.jpg"
+            ],
+            "videoUrls": [
+              "https://cdn.example.com/ad.mp4"
+            ],
+            "units": []
+          },
+          "productLink": {
+            "kind": "app_store",
+            "name": "Example Meal Planner",
+            "url": "https://apps.apple.com/app/id1000000001",
+            "externalId": "1000000001",
+            "confidence": "verified"
+          },
+          "destination": {
+            "kind": "web",
+            "url": "https://try.example-meals.com/quiz",
+            "host": "try.example-meals.com",
+            "page": "try.example-meals.com",
+            "appStoreId": null
+          },
+          "productIconUrl": null,
+          "performance": {
+            "kind": "unavailable"
+          },
+          "saved": false
+        },
+        "product": null,
+        "sameAppAds": [],
+        "otherAppAds": [],
+        "transcript": null,
+        "analysis": null
+      },
+      "analysisState": {
+        "status": "pending",
+        "requestedAt": "2026-11-06T07:59:00.000Z"
+      }
+    },
+    {
+      "platform": "meta",
+      "archiveId": "900000000000000",
+      "label": "Example Meals",
+      "storeId": "1000000001",
+      "ad": {
+        "item": {
+          "id": "33333333-3333-4333-8333-333333333333",
+          "canonicalKey": "paid:meta:900000000000000",
+          "source": "paid",
+          "platform": "meta",
+          "archiveId": "900000000000000",
+          "advertiser": {
+            "externalId": "400000000000001",
+            "name": "Example Meal Planner"
+          },
+          "status": "active",
+          "startedAt": "2026-11-08T00:00:00.000Z",
+          "endedAt": null,
+          "discoveredAt": "2026-11-10T00:00:00.000Z",
+          "sourceUrl": "https://www.facebook.com/ads/library?id=900000000000000",
+          "creative": {
+            "format": "image",
+            "hook": "Stop guessing what to cook",
+            "body": "Your week of dinners on one list.",
+            "title": "Example Meal Planner",
+            "description": null,
+            "ctaText": "Learn more",
+            "imageUrls": [
+              "https://cdn.example.com/ad.jpg"
+            ],
+            "videoUrls": [],
+            "units": []
+          },
+          "productLink": {
+            "kind": "app_store",
+            "name": "Example Meal Planner",
+            "url": "https://apps.apple.com/app/id1000000001",
+            "externalId": "1000000001",
+            "confidence": "verified"
+          },
+          "destination": {
+            "kind": "app_store",
+            "url": "https://apps.apple.com/app/id1000000001",
+            "host": "apps.apple.com",
+            "page": "apps.apple.com",
+            "appStoreId": "1000000001"
+          },
+          "productIconUrl": null,
+          "performance": {
+            "kind": "unavailable"
+          },
+          "saved": false
+        },
+        "product": null,
+        "sameAppAds": [],
+        "otherAppAds": [],
+        "transcript": null,
+        "analysis": null
+      },
+      "analysisState": {
+        "status": "failed",
+        "failedAt": "2026-11-05T10:00:00.000Z"
+      }
+    }
+  ]
+}

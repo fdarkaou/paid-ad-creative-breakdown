@@ -1,0 +1,44 @@
+# Example: every Monday, break down your rival's newest live video ads and post what changed to Slack or Discord.
+# Disabled until you set the repository variable ENABLE_CREATIVE_BREAKDOWN=true.
+# Secrets: PEEKPANDA_TOKEN (PeekPanda API key, required), CREATIVE_BREAKDOWN_WEBHOOK_URL (optional).
+# Calls per run: 1 search per app + 2 per ad (5 ads = 11). Peek allows 30 API and MCP calls a UTC day, Panda 1,000.
+# No --request here, so the run only reads stored analyses and never asks for new ones.
+name: paid-ad-creative-breakdown
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+jobs:
+  breakdown:
+    if: vars.ENABLE_CREATIVE_BREAKDOWN == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: breakdown-state.json
+          key: creative-breakdown-state-${{ github.run_id }}
+          restore-keys: creative-breakdown-state-
+      - name: paid-ad creative breakdown
+        env:
+          PEEKPANDA_TOKEN: ${{ secrets.PEEKPANDA_TOKEN }}
+          CREATIVE_BREAKDOWN_WEBHOOK_URL: ${{ secrets.CREATIVE_BREAKDOWN_WEBHOOK_URL }}
+        run: |
+          # Edit the App Store id below (your rival; optional =Label).
+          ARGS="--app 1000000001=Rival --limit 5 --state breakdown-state.json --archive history"
+          if [ -n "$CREATIVE_BREAKDOWN_WEBHOOK_URL" ]; then ARGS="$ARGS --webhook $CREATIVE_BREAKDOWN_WEBHOOK_URL"; fi
+          node cli.js $ARGS >> "$GITHUB_STEP_SUMMARY"
+          node cli.js --file breakdown-state.json --format csv > creative-breakdown.csv
+      - uses: actions/cache/save@v4
+        with:
+          path: breakdown-state.json
+          key: creative-breakdown-state-${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paid-ad-creative-breakdown
+          path: |
+            creative-breakdown.csv
+            history/

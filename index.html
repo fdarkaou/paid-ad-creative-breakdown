@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paid-ad creative breakdown: hooks, scenes and transcripts of rival app ads</title>
+<meta name="description" content="Paste PeekPanda paid-ad reads and see each rival Meta or TikTok ad broken down: summary, hook notes, scene timeline, on-screen text, transcript and reusable creative ingredients. Runs in your browser.">
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; max-width: 1100px; margin: 2rem auto; padding: 0 1rem; color: #1b1b1f; }
+  textarea { width: 100%; min-height: 150px; font: 13px ui-monospace, monospace; }
+  button { padding: .45rem .9rem; margin: .5rem .5rem .5rem 0; cursor: pointer; }
+  table { border-collapse: collapse; width: 100%; margin-top: .5rem; font-size: 13px; }
+  th, td { border-bottom: 1px solid #ddd; padding: .35rem .5rem; text-align: left; vertical-align: top; }
+  td.n, th.n { text-align: right; white-space: nowrap; }
+  .muted { color: #777; } .err { color: #cf222e; white-space: pre-wrap; }
+  .kpi { display: flex; flex-wrap: wrap; gap: .75rem; margin: .75rem 0; }
+  .kpi div { background: #f6f8fa; border-radius: 6px; padding: .4rem .8rem; min-width: 110px; } .kpi b { display: block; font-size: 20px; }
+  .chip { display: inline-block; font-size: 11px; padding: .05rem .4rem; border-radius: 999px; background: #eef2ff; color: #3730a3; margin: 0 .2rem .2rem 0; }
+  .st { font-size: 11px; padding: .05rem .4rem; border-radius: 4px; background: #eee; }
+  .st.ready { background: #dcfce7; color: #166534; } .st.pending { background: #fef3c7; color: #92400e; } .st.failed { background: #fee2e2; color: #991b1b; }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: .75rem 1rem; margin: 1rem 0; }
+  .card h3 { margin: 0 0 .25rem; font-size: 16px; }
+  svg text { font: 10px system-ui, sans-serif; }
+  pre { background: #f6f8fa; padding: .75rem; overflow-x: auto; font-size: 13px; }
+  blockquote { margin: .5rem 0; padding-left: .75rem; border-left: 3px solid #ddd; color: #444; }
+  footer { margin-top: 2.5rem; font-size: 13px; color: #555; }
+  a { color: #0969da; }
+</style>
+</head>
+<body>
+<h1>Paid-ad creative breakdown</h1>
+<p>What is inside a rival's Meta or TikTok ad, second by second? Paste PeekPanda reads of one or more stored ads and this page shows each ad's summary, hook notes, scene timeline, on-screen text, transcript and the reusable ingredients the analysis names, plus what the ads share. Nothing leaves your browser; this page never calls the API.</p>
+<textarea id="in" spellcheck="false" placeholder='{"item":{"canonicalKey":"paid:meta:111222333",...},"transcript":{...},"analysis":{"summary":"...","timeline":{...}}}'></textarea>
+<p class="muted">Optional: paste a report you saved earlier (CLI <code>--format json</code> or a <code>--state</code> file) to see what changed since then.</p>
+<textarea id="prev" spellcheck="false" style="min-height:60px"></textarea>
+<div>
+  <button id="go">Show</button>
+  <button id="ex">Load example data</button>
+  <button id="csv" disabled>Download CSV</button>
+</div>
+<div id="err" class="err"></div>
+<div id="out"></div>
+
+<h2>Where to get the JSON</h2>
+<p>The input comes from <a href="https://peekpanda.com">PeekPanda</a>, an iOS competitor catalogue where every app has a case file of dated, stored evidence. Read one stored ad, with its transcript and analysis once they exist, using an API key (one call from your plan's daily API and MCP allowance):</p>
+<pre>curl --get 'https://api.peekpanda.com/v1/paid-ads/meta/111222333' \
+  --header "Authorization: Bearer $PEEKPANDA_TOKEN" \
+  --header 'x-genviral-tenancy: personal'</pre>
+<p>Paste a single response, a JSON array of them, or the file the command-line version saves. Over MCP the same read is <code>get_ads</code> with action <code>get</code>; the analysis state alone is action <code>analysis</code>. The <a href="https://peekpanda.com/docs/get-paid-ad-analysis">get paid-ad analysis reference</a> lists the analysis fields. The command-line version on GitHub picks a rival's live ads for you, reads the analysis state, can ask for missing analyses (<code>--request</code>, scope <code>content:write</code>), keeps a weekly diff and can post to Slack or Discord.</p>
+<p class="muted">Analysis and transcripts are creative observations of the stored public ad, not a performance or policy claim. There is no spend or reach here. An ad without analysis has not been analysed yet; that says nothing about the ad. Image and video links are short-lived, so this page does not show them.</p>
+<footer>MIT licensed sample. <a href="https://github.com/fdarkaou/paid-ad-creative-breakdown">Source on GitHub</a>. Example data is made up and is not real apps or ads.</footer>
+
+<script type="module">
+import { toReport, diff, diffLines, toCsv, fmt } from './breakdown.js';
+const $ = (id) => document.getElementById(id);
+const h = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const safe = (u) => (/^https:\/\//.test(u ?? '') ? h(u) : null);
+const COLORS = ['#2563eb', '#16a34a', '#f59e0b', '#9333ea', '#0891b2', '#dc2626'];
+let report = null;
+
+// Scene bars on one row, on-screen text on a second row, product-appears marker. Seconds as returned.
+function timeline(t) {
+  const dur = t.durationSeconds ?? Math.max(0, ...t.scenes.map((s) => s.endSeconds ?? 0), ...t.onScreenText.map((s) => s.endSeconds ?? 0));
+  if (!dur) return '';
+  const W = 760, x = (s) => 10 + ((s ?? 0) / dur) * (W - 20);
+  let g = '';
+  t.scenes.forEach((s, i) => { g += `<rect x="${x(s.startSeconds)}" y="6" width="${Math.max(1, x(s.endSeconds ?? dur) - x(s.startSeconds))}" height="18" fill="${COLORS[i % COLORS.length]}" opacity=".8"><title>${h(`${fmt(s.startSeconds)}–${fmt(s.endSeconds)}s: ${s.description}`)}</title></rect>`; });
+  t.onScreenText.forEach((s) => { g += `<rect x="${x(s.startSeconds)}" y="30" width="${Math.max(1, x(s.endSeconds ?? dur) - x(s.startSeconds))}" height="10" fill="#111" opacity=".55"><title>${h(`text ${fmt(s.startSeconds)}–${fmt(s.endSeconds)}s: ${s.text}`)}</title></rect>`; });
+  if (t.productAppearsAtSeconds != null) g += `<line x1="${x(t.productAppearsAtSeconds)}" x2="${x(t.productAppearsAtSeconds)}" y1="2" y2="46" stroke="#dc2626" stroke-width="2"><title>product appears at ${fmt(t.productAppearsAtSeconds)}s</title></line>`;
+  for (let s = 0; s <= dur; s += dur > 30 ? 10 : 5) g += `<text x="${x(s)}" y="58" text-anchor="middle" fill="#777">${s}s</text>`;
+  return `<svg viewBox="0 0 ${W} 62" width="100%" role="img" aria-label="scene timeline">${g}</svg><div class="muted" style="font-size:12px">Coloured bars: scenes. Grey bars: on-screen text. Red line: product appears.</div>`;
+}
+
+function card(a) {
+  const an = a.analysis, t = an?.timeline;
+  let c = `<div class="card"><h3>${h(a.hook ?? a.key)} <span class="st ${h(a.analysisStatus)}">${h(a.analysisStatus ?? 'state not read')}</span></h3>`;
+  c += `<div class="muted">${h([a.advertiser ?? a.label, a.key, a.format, a.cta, a.daysLive != null ? `${a.daysLive} days live` : null, a.destinationHost].filter(Boolean).join(' · '))}${safe(a.sourceUrl) ? ` · <a href="${safe(a.sourceUrl)}" rel="noopener nofollow" target="_blank">ad library</a>` : ''}</div>`;
+  if (!an) {
+    const why = { pending: 'Analysis is running; read again in a minute.', failed: 'The last analysis run produced nothing; ask again with POST to retry.', not_requested: 'Nobody has asked for an analysis yet.' };
+    c += `<p class="muted">${h(why[a.analysisStatus] ?? 'No analysis in this read.')}</p>`;
+  } else {
+    if (an.summary) c += `<p>${h(an.summary)}</p>`;
+    if (t) c += `<p class="muted">${h([t.format, t.pace && `${t.pace} pace`, t.durationSeconds != null && `${fmt(t.durationSeconds)}s`, t.cutCount != null && `${fmt(t.cutCount)} cuts`, t.productAppearsAtSeconds != null && `product at ${fmt(t.productAppearsAtSeconds)}s`].filter(Boolean).join(' · '))}</p>${timeline(t)}`;
+    if (an.hookNotes.length) c += `<p><b>Hook notes</b></p><ul>${an.hookNotes.map((x) => `<li>${h(x)}</li>`).join('')}</ul>`;
+    if (t?.scenes.length) c += `<p><b>Scenes</b></p><ol>${t.scenes.map((s) => `<li><span class="muted">${fmt(s.startSeconds)}–${fmt(s.endSeconds)}s</span> ${h(s.description)}</li>`).join('')}</ol>`;
+    const txt = t?.onScreenText.length ? t.onScreenText.map((s) => `${fmt(s.startSeconds)}–${fmt(s.endSeconds)}s “${s.text}”`) : an.visibleText.map((s) => `“${s}”`);
+    if (txt.length) c += `<p><b>On-screen text</b></p><ul>${txt.map((x) => `<li>${h(x)}</li>`).join('')}</ul>`;
+    if (an.editingPattern) c += `<p><b>Editing:</b> ${h(an.editingPattern)}</p>`;
+    if (an.ingredients.length) c += `<p>${an.ingredients.map((x) => `<span class="chip">${h(x)}</span>`).join('')}</p>`;
+    c += `<p class="muted" style="font-size:12px">Analysis by ${h(an.model ?? '?')} at ${h((an.generatedAt ?? '?').slice(0, 10))}.</p>`;
+  }
+  if (a.transcript) c += `<p><b>Transcript</b> <span class="muted">(${h(a.transcript.language ?? '?')}, ${a.transcript.words} words)</span></p><blockquote>${h(a.transcript.text)}</blockquote>`;
+  return c + '</div>';
+}
+
+function render() {
+  $('err').textContent = ''; $('out').innerHTML = ''; $('csv').disabled = true;
+  try {
+    const input = JSON.parse($('in').value);
+    report = toReport(input, { fetchedAt: input?.fetchedAt ? null : new Date().toISOString() });
+    const prevText = $('prev').value.trim();
+    const d = prevText ? diff(report, JSON.parse(prevText)) : null;
+    const t = report.totals;
+    let html = `<div class="kpi"><div><b>${t.ads}</b>ads</div><div><b>${t.byStatus.ready}</b>analysis ready</div><div><b>${t.byStatus.pending + t.byStatus.failed + t.byStatus.not_requested}</b>not ready</div><div><b>${t.withTranscript}</b>transcripts</div><div><b>${t.medianDurationSeconds == null ? '—' : fmt(t.medianDurationSeconds) + 's'}</b>median length</div><div><b>${t.medianProductAppearsAtSeconds == null ? '—' : fmt(t.medianProductAppearsAtSeconds) + 's'}</b>median product appears</div></div>`;
+    if (d) { const lines = diffLines(d); html += `<h2>Since the last report</h2><ul>${(lines.length ? lines : ['No changes.']).map((l) => `<li>${h(l)}</li>`).join('')}</ul>`; }
+    if (report.ingredients.length) html += `<h2>What the ads share</h2><p>${report.ingredients.map((x) => `<span class="chip">${h(x.key)} · ${x.count}</span>`).join('')}</p><p class="muted">Reusable ingredients the analysis names, counted once per ad.${report.paces.length ? ` Pace: ${h(report.paces.map((x) => `${x.key} ${x.count}`).join(', '))}.` : ''}</p>`;
+    html += '<h2>Ads</h2>' + report.ads.map(card).join('');
+    $('out').innerHTML = html;
+    $('csv').disabled = false;
+  } catch (e) { $('err').textContent = e.message; }
+}
+$('go').onclick = render;
+$('ex').onclick = async () => {
+  $('in').value = await (await fetch('examples/breakdown.json')).text();
+  $('prev').value = await (await fetch('examples/previous.json')).text();
+  render();
+};
+$('csv').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([toCsv(report)], { type: 'text/csv' }));
+  a.download = 'paid-ad-creative-breakdown.csv'; a.click();
+};
+</script>
+</body>
+</html>

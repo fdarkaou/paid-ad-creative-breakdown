@@ -1,0 +1,14 @@
+{
+  "name": "paid-ad-creative-breakdown",
+  "version": "1.0.0",
+  "description": "What is inside a rival iOS app's Meta or TikTok ad? Reads PeekPanda's stored creative analysis and transcript per ad: summary, hook notes, scene timeline, on-screen text and reusable ingredients, with a weekly diff. Markdown/CSV/JSON, optional Slack or Discord post.",
+  "type": "module",
+  "bin": { "paid-ad-creative-breakdown": "cli.js" },
+  "scripts": { "test": "node --test test/" },
+  "engines": { "node": ">=18" },
+  "license": "MIT",
+  "author": "Fekri Darkaoui",
+  "repository": { "type": "git", "url": "https://github.com/fdarkaou/paid-ad-creative-breakdown.git" },
+  "homepage": "https://fdarkaou.github.io/paid-ad-creative-breakdown/",
+  "keywords": ["app-store", "paid-ads", "meta-ads", "tiktok-ads", "ad-creative", "video-ads", "transcript", "competitor-analysis", "ios", "peekpanda"]
+}
